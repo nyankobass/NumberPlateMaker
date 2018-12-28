@@ -9,6 +9,6 @@ For model cars, create printing data of Japanese number plate decals.
 ``` $ npm run build```
 
 ## debug
-``` $ npm run start```
+``` $ npm run start```  
 You can access to localhost:8080.
 
