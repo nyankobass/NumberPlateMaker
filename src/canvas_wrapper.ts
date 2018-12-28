@@ -45,10 +45,12 @@ class CanvasWrapper {
         }
     }
 
-    public toDataURL():string{
+    // canvasの画像をDataURL形式の文字列として返す
+    public toDataURL(): string {
         return this.canvas.toDataURL();
     }
 
+    // キャンバスのサイズを設定する
     public setSize(size: Size) {
         this.canvas.width = size.width;
         this.canvas.height = size.height;
@@ -96,11 +98,32 @@ class CanvasWrapper {
             return;
         }
 
+        // 画像取得
+        const img = this.numberImg[parseInt(char)];
+
+        // colorで塗りつぶされた文字の作成
+        const memCanvas = document.createElement("canvas");
+        memCanvas.width = img.naturalWidth;
+        memCanvas.height = img.naturalHeight;
+        const mem_context = memCanvas.getContext('2d');
+        if (!mem_context) {
+            return;
+        }
+
+        // 一度すべてcolorで塗りつぶす
+        mem_context.fillStyle = color;
+        mem_context.fillRect(0, 0, memCanvas.width, memCanvas.height);
+
+        // 画像ファイルでマスキング
+        mem_context.globalCompositeOperation = 'destination-in';
+        mem_context.drawImage(img, 0, 0, img.naturalWidth, img.naturalHeight);
+
+        // 作成した文字を描写
         const context = this.canvas.getContext('2d');
         if (!context) {
             return;
         }
-        context.drawImage(this.numberImg[parseInt(char)], position.x, position.y, size.width, size.height);
+        context.drawImage(memCanvas, position.x, position.y, size.width, size.height);
     }
 
     // 1文字を指定されたサイズ・位置・色で描画する
