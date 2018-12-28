@@ -1,3 +1,5 @@
+import * as WebfontLoader from 'webfontloader'
+
 interface Size {
     width: number,
     height: number
@@ -11,14 +13,18 @@ interface Position {
 
 // コンストラクタで与えらえたcanvasに描画する
 class CanvasWrapper {
+    //Webフォントの名前
+    private webFontName:string = 'Sawarabi Mincho';
+    private webFontURL :string = 'https://fonts.googleapis.com/css?family=Sawarabi+Mincho';
+
     // キャンバス
     private canvas: HTMLCanvasElement;
 
     // 画像データ
     private numberImg: { [key: string]: HTMLImageElement; } = {};;
 
-    private readonly IMAGE_FILE_NAME:string[] =[
-        "0","1","2","3","4","5","6","7","8","9","・"
+    private readonly IMAGE_FILE_NAME: string[] = [
+        "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "・"
     ]
 
     // tr_option
@@ -30,10 +36,28 @@ class CanvasWrapper {
     constructor(canvas: HTMLCanvasElement) {
         this.canvas = canvas;
     }
-
     init(callback: () => void) {
-        let load_num = 9;
+        
+        let load_num = this.IMAGE_FILE_NAME.length + 1;
 
+        const func = function () {
+            load_num = load_num - 1;
+            if (load_num == 0) {
+                callback();
+            }
+        }
+
+        // Webフォントの読み込み
+        WebfontLoader.load({
+            custom: {
+                families: [this.webFontName],
+                urls: [this.webFontURL]
+            },
+            active: func,
+            inactive: func
+        });
+
+        // 画像の読み込み
         for (let i: number = 0; i < this.IMAGE_FILE_NAME.length; i++) {
             const fileName = this.IMAGE_FILE_NAME[i];
             const filePath = "img/" + fileName + ".png";
@@ -41,12 +65,7 @@ class CanvasWrapper {
             this.numberImg[fileName] = new Image();
             this.numberImg[fileName].src = filePath;
 
-            this.numberImg[fileName].onload = function () {
-                load_num = load_num - 1;
-                if (load_num == 0) {
-                    callback();
-                }
-            }
+            this.numberImg[fileName].onload = func;
         }
     }
 
@@ -98,8 +117,8 @@ class CanvasWrapper {
     }
 
     // 引数に与えられた文字の画像が用意されている場合true
-    public canDrawImage(char: string):boolean{
-        if (this.IMAGE_FILE_NAME.indexOf(char) == -1){
+    public canDrawImage(char: string): boolean {
+        if (this.IMAGE_FILE_NAME.indexOf(char) == -1) {
             return false;
         }
 
@@ -160,7 +179,7 @@ class CanvasWrapper {
         context.fillRect(0, 0, MEM_CANVAS_WIDTH, MEM_CANVAS_HEIGHT);
 
         context.fillStyle = color;
-        context.font = "300px 'ＭＳ Ｐゴシック'";
+        context.font = "bold 300px 'Sawarabi Mincho'";
         context.textAlign = "left";
         context.textBaseline = "top";
         context.fillText(char, 0, 0);
