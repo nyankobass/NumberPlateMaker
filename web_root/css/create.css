@@ -1,0 +1,12 @@
+.icon{
+    color: #563d7c;
+}
+
+#plate-view{
+    width: 80%;
+  box-shadow: 0 0 12px rgba(0,0,0,0.4);
+}
+
+.lead{
+    font-size: 16px;
+}
