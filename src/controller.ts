@@ -68,10 +68,8 @@ function load() {
     }
 
     // pdf関連
-    const printButton = document.getElementById("print-button") as HTMLButtonElement;
-    printButton.onclick = printPDF;
-    const saveButton = document.getElementById("save-button") as HTMLButtonElement;
-    saveButton.onclick = savePDF;
+    const printButton = document.getElementById("download-button") as HTMLButtonElement;
+    printButton.onclick = savePDF;
 
 
     //ローディング画面非表示
