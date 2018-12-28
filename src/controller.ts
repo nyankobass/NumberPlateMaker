@@ -24,6 +24,15 @@ window.onload = function () {
 function load() {
     numberPlate.drawAll();
 
+    // スケール一覧追加
+    const scaleInput = document.getElementById("scale") as HTMLSelectElement;
+    for (let number = 10; number <= 90; number++) {
+        const option = document.createElement('option');
+        option.textContent = "1/" + number.toString();
+        option.value = number.toString();
+        scaleInput.appendChild(option);
+    }
+
     //===================================
     // イベント登録
     //===================================
@@ -58,8 +67,11 @@ function load() {
         input.oninput = changeLargeNumber;
     }
 
+    // pdf関連
     const printButton = document.getElementById("print-button") as HTMLButtonElement;
-    printButton.onclick = savePDF;
+    printButton.onclick = printPDF;
+    const saveButton = document.getElementById("save-button") as HTMLButtonElement;
+    saveButton.onclick = savePDF;
 }
 
 //===================================
@@ -135,17 +147,38 @@ function changeIsCompany() {
 //===================================
 // PdfMake関連
 //===================================
-// pdfへのプリントを実行する
+// pdfを表示する
 function savePDF() {
-    const base64 = numberPlate.toDataURL();
+    const docDefinition = createDocDefinition();
 
+    PDFMake.createPdf(docDefinition).open();
+}
+
+// pdfを印刷する
+function printPDF() {
+    const docDefinition = createDocDefinition();
+
+    PDFMake.createPdf(docDefinition).print();
+}
+function createDocDefinition(): PDFMake.TDocumentDefinitions
+{
+    //===================================
     // 各種寸法作成
-    // const scale = _scale;
-    const scale = 1 / 18;
-    const pdfWidth = Setting.mm2pt(Setting.PLATE_WIDTH_MM * scale);
+    //===================================
+    // スケール取得
+    const scaleInput = document.getElementById("scale") as HTMLSelectElement;
+    const scale_text = scaleInput.value;
 
+    // 描画するプレートのサイズを計算
+    const scale = 1 / Number(scale_text);
+    const plateWidth = Setting.mm2pt(Setting.PLATE_WIDTH_MM * scale);
+
+    // 各種マージン
     const plateMargin = Setting.mm2pt(10);
     const pageMargin = Setting.mm2pt(20);
+
+    // ナンバープレート画像取得
+    const base64 = numberPlate.toDataURL();
 
     // pdf設定
     const docDefinition = {
@@ -156,7 +189,7 @@ function savePDF() {
                 columns: [
                     {
                         image: base64,
-                        width: pdfWidth,
+                        width: plateWidth,
                     },
                     {
                         text: "",
@@ -164,7 +197,7 @@ function savePDF() {
                     },
                     {
                         image: base64,
-                        width: pdfWidth
+                        width: plateWidth
                     },
                     {
                         text: "",
@@ -172,7 +205,7 @@ function savePDF() {
                     },
                     {
                         image: base64,
-                        width: pdfWidth,
+                        width: plateWidth,
                     },
                     {
                         text: "",
@@ -180,12 +213,12 @@ function savePDF() {
                     },
                     {
                         image: base64,
-                        width: pdfWidth,
+                        width: plateWidth,
                     }
                 ]
             }
         ]
     };
 
-    PDFMake.createPdf(docDefinition).open();
+    return docDefinition;
 }
