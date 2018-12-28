@@ -11,6 +11,25 @@
     font-size: 16px;
 }
 
+/* フローティングボタン */
+div#add_button {
+  font-size: 21px;
+  line-height: 55px;
+  text-align: center;
+  color: white;
+  background-color: #007bff;
+  width: 55px;
+  height: 55px;
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  border-radius: 50%;
+  z-index: 0.5;
+  box-shadow:0px 3px 10px rgba(0,0,0, 0.4);
+  -webkit-box-shadow: 0px 3px 10px rgba(0,0,0, 0.4);
+  }
+
+/* ローディング */
 #loading{
     position:			fixed;
     top:				0;
@@ -34,8 +53,7 @@
   color: #fff;
 }
 
-
-
+/* ローディング用フェードアウト */
 .fade-box {
     transition: opacity 1s, visibility 0s ease 0.8s;
       
@@ -50,6 +68,7 @@
     visibility: visible;
   }
   
+/* ローディングアニメーション */
 .loader,
 .loader:after {
   border-radius: 50%;
