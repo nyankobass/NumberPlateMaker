@@ -3,3 +3,6 @@
 
 # ignore build result
 /build/*
+
+# ignore package-lock.json
+package-lock.json
