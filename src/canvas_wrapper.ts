@@ -15,7 +15,11 @@ class CanvasWrapper {
     private canvas: HTMLCanvasElement;
 
     // 画像データ
-    private numberImg: HTMLImageElement[] = [];
+    private numberImg: { [key: string]: HTMLImageElement; } = {};;
+
+    private readonly IMAGE_FILE_NAME:string[] =[
+        "0","1","2","3","4","5","6","7","8","9","・"
+    ]
 
     // tr_option
     public static readonly FIXED: number = 0;
@@ -30,13 +34,14 @@ class CanvasWrapper {
     init(callback: () => void) {
         let load_num = 9;
 
-        for (let i: number = 0; i <= 9; i++) {
-            const fileName = "img/" + i.toString() + ".png";
+        for (let i: number = 0; i < this.IMAGE_FILE_NAME.length; i++) {
+            const fileName = this.IMAGE_FILE_NAME[i];
+            const filePath = "img/" + fileName + ".png";
 
-            this.numberImg[i] = new Image();
-            this.numberImg[i].src = fileName;
+            this.numberImg[fileName] = new Image();
+            this.numberImg[fileName].src = filePath;
 
-            this.numberImg[i].onload = function () {
+            this.numberImg[fileName].onload = function () {
                 load_num = load_num - 1;
                 if (load_num == 0) {
                     callback();
@@ -77,7 +82,7 @@ class CanvasWrapper {
         // 一文字に制限
         char = char.slice(0, 1);
 
-        if (CanvasWrapper.isNumber(char)) {
+        if (this.canDrawImage(char)) {
             this.drawNumberChar(char, size, position, color);
         }
 
@@ -92,6 +97,15 @@ class CanvasWrapper {
         return reg.test(char);
     }
 
+    // 引数に与えられた文字の画像が用意されている場合true
+    public canDrawImage(char: string):boolean{
+        if (this.IMAGE_FILE_NAME.indexOf(char) == -1){
+            return false;
+        }
+
+        return true;
+    }
+
     // 指定された数字一文字を指定されたサイズ・位置・色で描画する
     private drawNumberChar(char: string, size: Size, position: Position, color: string) {
         if (!this.canvas.getContext) {
@@ -99,7 +113,7 @@ class CanvasWrapper {
         }
 
         // 画像取得
-        const img = this.numberImg[parseInt(char)];
+        const img = this.numberImg[char];
 
         // colorで塗りつぶされた文字の作成
         const memCanvas = document.createElement("canvas");
