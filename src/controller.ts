@@ -72,6 +72,11 @@ function load() {
     printButton.onclick = printPDF;
     const saveButton = document.getElementById("save-button") as HTMLButtonElement;
     saveButton.onclick = savePDF;
+
+
+    //ローディング画面非表示
+    const loadingDiv = document.getElementById("loading") as HTMLDivElement;
+    loadingDiv.classList.toggle('is-show')
 }
 
 //===================================
