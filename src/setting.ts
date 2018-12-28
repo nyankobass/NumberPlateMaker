@@ -50,7 +50,7 @@ class Setting {
     ];
 
     // 描画設定
-    public static readonly draw_setting: { [key: string]: DrawSetting; } = {
+    public static readonly drawSetting: { [key: string]: DrawSetting; } = {
         "hiragana": {
             position: {
                 x: Setting.mm2px(20),

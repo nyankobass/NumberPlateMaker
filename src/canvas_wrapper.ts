@@ -15,7 +15,7 @@ class CanvasWrapper {
     private canvas: HTMLCanvasElement;
 
     // 画像データ
-    private number_img: HTMLImageElement[] = [];
+    private numberImg: HTMLImageElement[] = [];
 
     // tr_option
     public static readonly FIXED: number = 0;
@@ -31,12 +31,12 @@ class CanvasWrapper {
         let load_num = 9;
 
         for (let i: number = 0; i <= 9; i++) {
-            let file_name = "img/" + i.toString() + ".png";
+            const fileName = "img/" + i.toString() + ".png";
 
-            this.number_img[i] = new Image();
-            this.number_img[i].src = file_name;
+            this.numberImg[i] = new Image();
+            this.numberImg[i].src = fileName;
 
-            this.number_img[i].onload = function () {
+            this.numberImg[i].onload = function () {
                 load_num = load_num - 1;
                 if (load_num == 0) {
                     callback();
@@ -49,13 +49,13 @@ class CanvasWrapper {
         return this.canvas.toDataURL();
     }
 
-    public set_size(size: Size) {
+    public setSize(size: Size) {
         this.canvas.width = size.width;
         this.canvas.height = size.height;
     }
 
     // 矩形を描画する
-    public draw_rect(size: Size, position: Position, color: string) {
+    public drawRect(size: Size, position: Position, color: string) {
         if (!this.canvas.getContext) {
             return;
         }
@@ -69,28 +69,29 @@ class CanvasWrapper {
         context.fillRect(position.x, position.y, size.width, size.height);
     }
 
-    // 文字を描画する
-    public draw_char(char: string, size: Size, position: Position, color: string, tr_option = CanvasWrapper.KEEP_ASPECT) {
+    // 1文字を指定されたサイズ・位置・色で描画する
+    // 数字に関しては画像データ(number_img)を利用して描画する
+    public drawChar(char: string, size: Size, position: Position, color: string, trOption = CanvasWrapper.KEEP_ASPECT) {
         // 一文字に制限
         char = char.slice(0, 1);
 
-        if (CanvasWrapper.is_number(char)) {
-            this.draw_number_char(char, size, position, color);
+        if (CanvasWrapper.isNumber(char)) {
+            this.drawNumberChar(char, size, position, color);
         }
 
         else {
-            this.draw_jp_char(char, size, position, color, tr_option);
+            this.drawJpChar(char, size, position, color, trOption);
         }
     }
 
     // 引数に与えられた文字が数値文字であるかを返す。
-    public static is_number(char: string): boolean {
+    public static isNumber(char: string): boolean {
         const reg = /[0-9]/
         return reg.test(char);
     }
 
-    private draw_number_char(char: string, size: Size, position: Position, color: string) {
-        // 描写
+    // 指定された数字一文字を指定されたサイズ・位置・色で描画する
+    private drawNumberChar(char: string, size: Size, position: Position, color: string) {
         if (!this.canvas.getContext) {
             return;
         }
@@ -99,20 +100,21 @@ class CanvasWrapper {
         if (!context) {
             return;
         }
-        context.drawImage(this.number_img[parseInt(char)], position.x, position.y, size.width, size.height);
+        context.drawImage(this.numberImg[parseInt(char)], position.x, position.y, size.width, size.height);
     }
 
-    private draw_jp_char(char: string, size: Size, position: Position, color: string, tr_option = CanvasWrapper.KEEP_ASPECT) {
+    // 1文字を指定されたサイズ・位置・色で描画する
+    private drawJpChar(char: string, size: Size, position: Position, color: string, trOption = CanvasWrapper.KEEP_ASPECT) {
         const MEM_CANVAS_HEIGHT = 500;
         const MEM_CANVAS_WIDTH = 500;
 
         // 文字画像データ作成用キャンパス作成
-        const mem_canvas = document.createElement("canvas");
-        mem_canvas.height = MEM_CANVAS_HEIGHT;
-        mem_canvas.width = MEM_CANVAS_WIDTH;
+        const memCanvas = document.createElement("canvas");
+        memCanvas.height = MEM_CANVAS_HEIGHT;
+        memCanvas.width = MEM_CANVAS_WIDTH;
 
         // 文字の描写
-        const context = mem_canvas.getContext('2d');
+        const context = memCanvas.getContext('2d');
         if (!context) {
             return;
         }
@@ -136,8 +138,8 @@ class CanvasWrapper {
         for (var i = 0, len = data.length; i < len; i += 4) {
             var r = data[i], g = data[i + 1], b = data[i + 2], alpha = data[i + 3];
             if (alpha > 0) {
-                var col = Math.floor((i / 4) % mem_canvas.width);
-                var row = Math.floor((i / 4) / mem_canvas.width);
+                var col = Math.floor((i / 4) % memCanvas.width);
+                var row = Math.floor((i / 4) / memCanvas.width);
 
                 if (left > col) left = col;
                 if (right < col) right = col;
@@ -146,22 +148,22 @@ class CanvasWrapper {
             }
         }
 
-        let char_size: Size = { width: right - left + 1, height: bottom - top + 1 };
+        let charSize: Size = { width: right - left + 1, height: bottom - top + 1 };
 
-        if (char_size.width / size.width < char_size.height / size.height) {
-            if (tr_option === CanvasWrapper.KEEP_ASPECT || tr_option == CanvasWrapper.FIXED_HEIGHT) {
-                const new_w = char_size.height * size.width / size.height;
-                left -= Math.ceil((new_w - char_size.width) / 2);
-                right += Math.ceil((new_w - char_size.width) / 2);
-                char_size.width = right - left + 1;
+        if (charSize.width / size.width < charSize.height / size.height) {
+            if (trOption === CanvasWrapper.KEEP_ASPECT || trOption == CanvasWrapper.FIXED_HEIGHT) {
+                const new_w = charSize.height * size.width / size.height;
+                left -= Math.ceil((new_w - charSize.width) / 2);
+                right += Math.ceil((new_w - charSize.width) / 2);
+                charSize.width = right - left + 1;
             }
         }
         else {
-            if (tr_option === CanvasWrapper.KEEP_ASPECT || tr_option == CanvasWrapper.FIXED_WIDTH) {
-                const new_h = char_size.width * size.height / size.width;
-                top -= Math.ceil((new_h - char_size.height) / 2);
-                bottom += Math.ceil((new_h - char_size.height) / 2);
-                char_size.height = bottom - top + 1;
+            if (trOption === CanvasWrapper.KEEP_ASPECT || trOption == CanvasWrapper.FIXED_WIDTH) {
+                const new_h = charSize.width * size.height / size.width;
+                top -= Math.ceil((new_h - charSize.height) / 2);
+                bottom += Math.ceil((new_h - charSize.height) / 2);
+                charSize.height = bottom - top + 1;
             }
         }
 
@@ -171,11 +173,11 @@ class CanvasWrapper {
             return;
         }
 
-        const canvas_context = this.canvas.getContext('2d');
-        if (!canvas_context) {
+        const canvasContext = this.canvas.getContext('2d');
+        if (!canvasContext) {
             return;
         }
-        canvas_context.drawImage(mem_canvas, left, top, char_size.width, char_size.height, position.x, position.y, size.width, size.height);
+        canvasContext.drawImage(memCanvas, left, top, charSize.width, charSize.height, position.x, position.y, size.width, size.height);
     }
 }
 

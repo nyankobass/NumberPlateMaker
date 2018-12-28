@@ -3,8 +3,8 @@ import Setting = require("./setting")
 
 class NumberPlate {
     // 書き込み情報
-    private small_number_list: string[] = ["3", "0", "0"];
-    private large_number_list: string[] = ["1", "2", "3", "4"];
+    private smallNumberList: string[] = ["3", "0", "0"];
+    private largeNumberList: string[] = ["1", "2", "3", "4"];
 
     public static readonly SMALL_NUMBER_COUNT: number = 3;
     public static readonly LARGE_NUMBER_COUNT: number = 4;
@@ -12,11 +12,11 @@ class NumberPlate {
     private hiragana: string = "さ";
     private kanji: string = "横浜";
 
-    private car_type: number = NumberPlate.NORMAL_CAR;
+    private carType: number = NumberPlate.NORMAL_CAR;
     public static readonly NORMAL_CAR: number = 0;
     public static readonly KEI_CAR: number = 1;
 
-    private is_company: boolean = false;
+    private isCompany: boolean = false;
 
     // 書き込み先
     private canvas: CanvasWrapper;
@@ -24,7 +24,7 @@ class NumberPlate {
     public constructor(canvas: HTMLCanvasElement) {
         this.canvas = new CanvasWrapper(canvas);
 
-        this.canvas.set_size(Setting.CANVAS_SIZE);
+        this.canvas.setSize(Setting.CANVAS_SIZE);
     }
 
     // 初期化
@@ -32,150 +32,150 @@ class NumberPlate {
         this.canvas.init(callback);
     }
 
-    public ToDataURL():string{
+    public toDataURL():string{
         return this.canvas.toDataURL();
     }
 
     // セッター
-    public set_car_type(car_type: number) {
-        this.car_type = car_type;
+    public setCarType(car_type: number) {
+        this.carType = car_type;
 
-        this.draw_all();
+        this.drawAll();
     }
 
-    public set_is_company(is_company: boolean) {
-        this.is_company = is_company;
+    public setIsCompany(is_company: boolean) {
+        this.isCompany = is_company;
 
-        this.draw_all();
+        this.drawAll();
     }
 
-    public set_hiragana(hiragana: string) {
+    public setHiragana(hiragana: string) {
         this.hiragana = hiragana.slice(0, 1);
         this.hiragana = hiragana;
 
-        this.draw_all();
+        this.drawAll();
     }
 
-    public set_kanji(kanji: string) {
+    public setKanji(kanji: string) {
         this.kanji = kanji;
 
-        this.draw_all();
+        this.drawAll();
     }
 
-    public set_small_number(small_number_list: string[]) {
-        if (small_number_list.length != NumberPlate.SMALL_NUMBER_COUNT) {
+    public setSmallNumber(smallNumberList: string[]) {
+        if (smallNumberList.length != NumberPlate.SMALL_NUMBER_COUNT) {
             return;
         }
 
         for (let i: number = 0; i < NumberPlate.SMALL_NUMBER_COUNT; i++) {
             let number_char = " "
-            if (CanvasWrapper.is_number(small_number_list[i])) {
-                number_char = small_number_list[i];
+            if (CanvasWrapper.isNumber(smallNumberList[i])) {
+                number_char = smallNumberList[i];
             }
 
-            this.small_number_list[i] = number_char;
+            this.smallNumberList[i] = number_char;
         }
 
-        this.draw_all();
+        this.drawAll();
     }
 
-    public set_large_number(large_number_list: string[]) {
-        if (large_number_list.length != NumberPlate.LARGE_NUMBER_COUNT) {
+    public setLargeNumber(largeNumberList: string[]) {
+        if (largeNumberList.length != NumberPlate.LARGE_NUMBER_COUNT) {
             return;
         }
 
         for (let i: number = 0; i < NumberPlate.LARGE_NUMBER_COUNT; i++) {
             let number_char = "・";
-            if (CanvasWrapper.is_number(large_number_list[i])) {
-                number_char = large_number_list[i];
+            if (CanvasWrapper.isNumber(largeNumberList[i])) {
+                number_char = largeNumberList[i];
             }
 
-            this.large_number_list[i] = number_char;
+            this.largeNumberList[i] = number_char;
         }
 
-        let is_dot: boolean = false;
+        let isDot: boolean = false;
         for (let i: number = NumberPlate.LARGE_NUMBER_COUNT - 1; i >= 0; i--) {
-            if (is_dot) {
-                this.large_number_list[i] = "・";
+            if (isDot) {
+                this.largeNumberList[i] = "・";
             }
-            else if (this.large_number_list[i] == "・") {
-                is_dot = true;
+            else if (this.largeNumberList[i] == "・") {
+                isDot = true;
             }
         }
 
-        this.draw_all();
+        this.drawAll();
     }
 
 
     // 描画
-    private draw_hiragana() {
-        const draw_setting = Setting.draw_setting["hiragana"];
-        this.canvas.draw_char(this.hiragana, draw_setting.size, draw_setting.position, this.get_color());
+    private drawHiragana() {
+        const drawSetting = Setting.drawSetting["hiragana"];
+        this.canvas.drawChar(this.hiragana, drawSetting.size, drawSetting.position, this.getColor());
     }
 
-    private draw_kanji() {
-        const kanji_list: string[] = this.kanji.split("");
+    private drawKanji() {
+        const kanjiList: string[] = this.kanji.split("");
 
-        const word_count = Math.min(kanji_list.length, 4);
+        const wordCount = Math.min(kanjiList.length, 4);
 
-        for (let i: number = 0; i < word_count; i++) {
-            const setting_key = "kanji" + word_count.toString() + "-" + (i + 1).toString();
-            const draw_setting = Setting.draw_setting[setting_key];
-            this.canvas.draw_char(kanji_list[i], draw_setting.size, draw_setting.position, this.get_color(), draw_setting.tr_option);
+        for (let i: number = 0; i < wordCount; i++) {
+            const setting_key = "kanji" + wordCount.toString() + "-" + (i + 1).toString();
+            const drawSetting = Setting.drawSetting[setting_key];
+            this.canvas.drawChar(kanjiList[i], drawSetting.size, drawSetting.position, this.getColor(), drawSetting.tr_option);
         }
     }
 
-    private draw_large_number() {
-        let is_draw_hyphen = true;
+    private drawLargeNumber() {
+        let isDrawHyphen = true;
 
         for (let i: number = 0; i < NumberPlate.LARGE_NUMBER_COUNT; i++) {
             const setting_key = "large_number" + (i + 1).toString();
-            const draw_setting = Setting.draw_setting[setting_key];
+            const drawSetting = Setting.drawSetting[setting_key];
 
-            this.canvas.draw_char(this.large_number_list[i], draw_setting.size, draw_setting.position, this.get_color());
+            this.canvas.drawChar(this.largeNumberList[i], drawSetting.size, drawSetting.position, this.getColor());
         
-            if(this.large_number_list[i] == "・"){
-                is_draw_hyphen = false;
+            if(this.largeNumberList[i] == "・"){
+                isDrawHyphen = false;
             }
         }
 
-        if (is_draw_hyphen){
-            this.draw_hyphen();
+        if (isDrawHyphen){
+            this.drawHyphen();
         }
     }
 
-    private draw_small_number() {
-        const draw_small_number_list: string[] = [];
+    private drawSmallNumber() {
+        const drawSmallNumberList: string[] = [];
 
         for (let i: number = 0; i < NumberPlate.SMALL_NUMBER_COUNT; i++) {
-            if (this.small_number_list[i] != " ") {
-                draw_small_number_list.push(this.small_number_list[i]);
+            if (this.smallNumberList[i] != " ") {
+                drawSmallNumberList.push(this.smallNumberList[i]);
             }
         }
 
-        for (let i: number = 0; i < draw_small_number_list.length; i++) {
-            const setting_key = "small_number" + draw_small_number_list.length + "-" + (i + 1).toString();
-            const draw_setting = Setting.draw_setting[setting_key];
+        for (let i: number = 0; i < drawSmallNumberList.length; i++) {
+            const setting_key = "small_number" + drawSmallNumberList.length + "-" + (i + 1).toString();
+            const drawSetting = Setting.drawSetting[setting_key];
 
-            this.canvas.draw_char(draw_small_number_list[i], draw_setting.size, draw_setting.position, this.get_color());
+            this.canvas.drawChar(drawSmallNumberList[i], drawSetting.size, drawSetting.position, this.getColor());
         }
     }
 
     // 色取得
-    private get_color(): string {
-        if (this.is_company) {
-            if (this.car_type == NumberPlate.NORMAL_CAR) {
+    private getColor(): string {
+        if (this.isCompany) {
+            if (this.carType == NumberPlate.NORMAL_CAR) {
                 return Setting.FRONT_COLOR[Setting.NORMAL_COMPANY_CAR];
             }
-            else if (this.car_type == NumberPlate.KEI_CAR) {
+            else if (this.carType == NumberPlate.KEI_CAR) {
                 return Setting.FRONT_COLOR[Setting.KEI_COMPANY_CAR];
             }
         }
 
-        if (this.car_type == NumberPlate.NORMAL_CAR) {
+        if (this.carType == NumberPlate.NORMAL_CAR) {
             return Setting.FRONT_COLOR[Setting.NORMAL_CAR];
         }
-        else if (this.car_type == NumberPlate.KEI_CAR) {
+        else if (this.carType == NumberPlate.KEI_CAR) {
             return Setting.FRONT_COLOR[Setting.KEI_CAR];
         }
 
@@ -183,20 +183,20 @@ class NumberPlate {
     }
 
     // 背景色取得
-    private get_bg_color(): string {
-        if (this.is_company) {
-            if (this.car_type == NumberPlate.NORMAL_CAR) {
+    private getBgColor(): string {
+        if (this.isCompany) {
+            if (this.carType == NumberPlate.NORMAL_CAR) {
                 return Setting.BG_COLOR[Setting.NORMAL_COMPANY_CAR];
             }
-            else if (this.car_type == NumberPlate.KEI_CAR) {
+            else if (this.carType == NumberPlate.KEI_CAR) {
                 return Setting.BG_COLOR[Setting.KEI_COMPANY_CAR];
             }
         }
 
-        if (this.car_type == NumberPlate.NORMAL_CAR) {
+        if (this.carType == NumberPlate.NORMAL_CAR) {
             return Setting.BG_COLOR[Setting.NORMAL_CAR];
         }
-        else if (this.car_type == NumberPlate.KEI_CAR) {
+        else if (this.carType == NumberPlate.KEI_CAR) {
             return Setting.BG_COLOR[Setting.KEI_CAR];
         }
 
@@ -204,8 +204,8 @@ class NumberPlate {
     }
 
 
-    private draw_hyphen(is_display = true) {
-        const draw_setting = {
+    private drawHyphen(is_display = true) {
+        const drawSetting = {
             position: {
                 x: Setting.mm2px(177.5),
                 y: Setting.mm2px(104),
@@ -216,23 +216,23 @@ class NumberPlate {
             }
         }
 
-        this.canvas.draw_rect(draw_setting.size, draw_setting.position, this.get_color());
+        this.canvas.drawRect(drawSetting.size, drawSetting.position, this.getColor());
     }
 
 
     // すべて塗りつぶす
-    private delete_all() {
-        this.canvas.draw_rect(Setting.CANVAS_SIZE, { x: 0, y: 0 }, this.get_bg_color());
+    private deleteAll() {
+        this.canvas.drawRect(Setting.CANVAS_SIZE, { x: 0, y: 0 }, this.getBgColor());
     }
 
     // 描写する
-    public draw_all() {
-        this.delete_all();
+    public drawAll() {
+        this.deleteAll();
 
-        this.draw_kanji();
-        this.draw_hiragana();
-        this.draw_small_number();
-        this.draw_large_number();
+        this.drawKanji();
+        this.drawHiragana();
+        this.drawSmallNumber();
+        this.drawLargeNumber();
     }
 }
 
