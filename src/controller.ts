@@ -25,11 +25,19 @@ function load() {
     numberPlate.drawAll();
 
     // スケール一覧追加
+    const INIT_SCALE_NUM = 24;
     const scaleInput = document.getElementById("scale") as HTMLSelectElement;
     for (let number = 10; number <= 90; number++) {
+        // オプション生成
         const option = document.createElement('option');
         option.textContent = "1/" + number.toString();
         option.value = number.toString();
+
+        // 初期選択
+        if(INIT_SCALE_NUM == number){
+            option.selected = true;
+        }
+
         scaleInput.appendChild(option);
     }
 
