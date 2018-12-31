@@ -56,13 +56,13 @@ class Controller extends NumberPlateObserver {
 
         // 普通自動車/軽自動車
         const normalCarInput = document.getElementById("normal-car") as HTMLInputElement;
-        normalCarInput.onclick = this.changeCarType;
+        normalCarInput.onclick = this.changeCarType.bind(this);
         const keiCarInput = document.getElementById("kei-car") as HTMLInputElement;
         keiCarInput.onclick = this.changeCarType.bind(this);
 
         // 自家用車/社用車
         const homeUseInput = document.getElementById("home-use") as HTMLInputElement;
-        homeUseInput.onclick = this.changeIsCompany;
+        homeUseInput.onclick = this.changeIsCompany.bind(this);
         const companyUseInput = document.getElementById("company-use") as HTMLInputElement;
         companyUseInput.onclick = this.changeIsCompany.bind(this);
 
