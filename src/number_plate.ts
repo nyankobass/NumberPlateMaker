@@ -235,7 +235,7 @@ class NumberPlate {
     }
 
     // ハイフンの描写
-    private drawHyphen(is_display = true) {
+    private drawHyphen() {
         const drawSetting = {
             position: {
                 x: Setting.mm2px(177.5),
@@ -250,6 +250,13 @@ class NumberPlate {
         this.canvas.drawRect(drawSetting.size, drawSetting.position, this.getColor());
     }
 
+    private drawBolt(){
+        const drawSetting1 = Setting.drawSetting["bolt1"];
+        const drawSetting2 = Setting.drawSetting["bolt2"];
+
+        this.canvas.drawCircle(drawSetting1.size, drawSetting1.position, "#9a9e9d")
+        this.canvas.drawCircle(drawSetting2.size, drawSetting2.position, "#9a9e9d")
+    }
 
     // 色取得
     private getColor(): string {
@@ -306,6 +313,8 @@ class NumberPlate {
         this.drawHiragana();
         this.drawSmallNumber();
         this.drawLargeNumber();
+
+        this.drawBolt();
     }
 }
 

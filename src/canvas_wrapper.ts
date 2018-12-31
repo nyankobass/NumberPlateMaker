@@ -85,6 +85,23 @@ class CanvasWrapper {
         this.canvas.height = size.height;
     }
 
+    // 円を描画する
+    public drawCircle(size: Size, position: Position, color: string) {
+        if (!this.canvas.getContext) {
+            return;
+        }
+
+        const context = this.canvas.getContext('2d');
+        if (!context) {
+            return;
+        }
+        context.beginPath();
+
+        context.arc(position.x, position.y, size.width / 2, 0 * Math.PI / 180, 360 * Math.PI / 180, false);
+        context.fillStyle = color;
+        context.fill();
+    }
+
     // 矩形を描画する
     public drawRect(size: Size, position: Position, color: string) {
         if (!this.canvas.getContext) {
@@ -102,7 +119,7 @@ class CanvasWrapper {
 
     // 1文字を指定されたサイズ・位置・色で描画する
     // 数字に関しては画像データ(number_img)を利用して描画する
-    public drawChar(char: string, size: Size, position: Position, color: string, trOption = CanvasWrapper.KEEP_ASPECT, fontType:FontType = FontType.SANS_SELF) {
+    public drawChar(char: string, size: Size, position: Position, color: string, trOption = CanvasWrapper.KEEP_ASPECT, fontType: FontType = FontType.SANS_SELF) {
         // 一文字に制限
         char = char.slice(0, 1);
 

@@ -97,7 +97,7 @@ class Setting {
         },
         "kanji3-1": {
             position: {
-                x: Setting.mm2px(170 - 100),
+                x: Setting.mm2px(170 - 95),
                 y: Setting.mm2px(15)
             },
             size: {
@@ -108,7 +108,7 @@ class Setting {
         },
         "kanji3-2": {
             position: {
-                x: Setting.mm2px(170 - 65),
+                x: Setting.mm2px(170 - 60),
                 y: Setting.mm2px(15)
             },
             size: {
@@ -119,7 +119,7 @@ class Setting {
         },
         "kanji3-3": {
             position: {
-                x: Setting.mm2px(170 - 30),
+                x: Setting.mm2px(170 - 25),
                 y: Setting.mm2px(15)
             },
             size: {
@@ -218,7 +218,7 @@ class Setting {
         },
         "small_number3-1": {
             position: {
-                x: Setting.mm2px(Setting.PLATE_WIDTH_MM / 2 + 10),
+                x: Setting.mm2px(Setting.PLATE_WIDTH_MM / 2 + 13),
                 y: Setting.mm2px(15)
             },
             size: {
@@ -229,7 +229,7 @@ class Setting {
         },
         "small_number3-2": {
             position: {
-                x: Setting.mm2px(Setting.PLATE_WIDTH_MM / 2 + 35),
+                x: Setting.mm2px(Setting.PLATE_WIDTH_MM / 2 + 38),
                 y: Setting.mm2px(15)
             },
             size: {
@@ -240,7 +240,7 @@ class Setting {
         },
         "small_number3-3": {
             position: {
-                x: Setting.mm2px(Setting.PLATE_WIDTH_MM / 2 + 60),
+                x: Setting.mm2px(Setting.PLATE_WIDTH_MM / 2 + 63),
                 y: Setting.mm2px(15)
             },
             size: {
@@ -268,6 +268,28 @@ class Setting {
             size: {
                 width: Setting.mm2px(30),
                 height: Setting.mm2px(40)
+            },
+            tr_option: CanvasWrapper.KEEP_ASPECT
+        },
+        "bolt1": {
+            position: {
+                x: Setting.mm2px(60),
+                y: Setting.mm2px(25)
+            },
+            size: {
+                width: Setting.mm2px(10),
+                height: Setting.mm2px(10)
+            },
+            tr_option: CanvasWrapper.KEEP_ASPECT
+        },
+        "bolt2": {
+            position: {
+                x: Setting.mm2px(Setting.PLATE_WIDTH_MM - 60),
+                y: Setting.mm2px(25)
+            },
+            size: {
+                width: Setting.mm2px(10),
+                height: Setting.mm2px(10)
             },
             tr_option: CanvasWrapper.KEEP_ASPECT
         }
