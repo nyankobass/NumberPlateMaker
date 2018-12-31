@@ -211,7 +211,10 @@ class Controller extends NumberPlateObserver {
         const pageMargin = Setting.mm2pt(20);
 
         // ナンバープレート画像取得
-        const base64 = this.numberPlate.toDataURL();
+        const small_base64 = this.numberPlate.toDataURL();
+        this.numberPlate.setIsLarge(true);
+        const large_base64 = this.numberPlate.toDataURL();
+        this.numberPlate.setIsLarge(false);
 
         // pdf設定
         const docDefinition = {
@@ -221,7 +224,7 @@ class Controller extends NumberPlateObserver {
                 {
                     columns: [
                         {
-                            image: base64,
+                            image: small_base64,
                             width: plateWidth,
                         },
                         {
@@ -229,7 +232,7 @@ class Controller extends NumberPlateObserver {
                             width: plateMargin
                         },
                         {
-                            image: base64,
+                            image: large_base64,
                             width: plateWidth
                         },
                         {
@@ -237,7 +240,7 @@ class Controller extends NumberPlateObserver {
                             width: plateMargin
                         },
                         {
-                            image: base64,
+                            image: small_base64,
                             width: plateWidth,
                         },
                         {
@@ -245,7 +248,7 @@ class Controller extends NumberPlateObserver {
                             width: plateMargin
                         },
                         {
-                            image: base64,
+                            image: large_base64,
                             width: plateWidth,
                         }
                     ]

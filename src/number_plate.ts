@@ -25,6 +25,9 @@ class NumberPlate {
 
     private isCompany: boolean = false;
 
+    // 留め具のサイズ
+    private isLargeBolt:boolean = false;
+
     // 書き込み先
     private canvas: CanvasWrapper;
 
@@ -58,6 +61,12 @@ class NumberPlate {
 
     public setIsCompany(is_company: boolean) {
         this.isCompany = is_company;
+
+        this.drawAll();
+    }
+
+    public setIsLarge(isLargeBolt: boolean){
+        this.isLargeBolt = isLargeBolt;
 
         this.drawAll();
     }
@@ -251,7 +260,7 @@ class NumberPlate {
     }
 
     private drawBolt(){
-        const drawSetting1 = Setting.drawSetting["bolt1"];
+        let drawSetting1 = this.isLargeBolt ? Setting.drawSetting["bolt1_large"] : Setting.drawSetting["bolt1"];
         const drawSetting2 = Setting.drawSetting["bolt2"];
 
         this.canvas.drawCircle(drawSetting1.size, drawSetting1.position, "#9a9e9d")

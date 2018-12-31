@@ -274,7 +274,7 @@ class Setting {
         "bolt1": {
             position: {
                 x: Setting.mm2px(60),
-                y: Setting.mm2px(25)
+                y: Setting.mm2px(28)
             },
             size: {
                 width: Setting.mm2px(10),
@@ -282,10 +282,21 @@ class Setting {
             },
             tr_option: CanvasWrapper.KEEP_ASPECT
         },
+        "bolt1_large": {
+            position: {
+                x: Setting.mm2px(60),
+                y: Setting.mm2px(28)
+            },
+            size: {
+                width: Setting.mm2px(22),
+                height: Setting.mm2px(22)
+            },
+            tr_option: CanvasWrapper.KEEP_ASPECT
+        },
         "bolt2": {
             position: {
                 x: Setting.mm2px(Setting.PLATE_WIDTH_MM - 60),
-                y: Setting.mm2px(25)
+                y: Setting.mm2px(28)
             },
             size: {
                 width: Setting.mm2px(10),
