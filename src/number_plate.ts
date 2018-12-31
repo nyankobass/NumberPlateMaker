@@ -1,5 +1,6 @@
 import NumberPlateObserver = require("./number_plate_observer")
 import CanvasWrapper = require("./canvas_wrapper")
+import FontType = require("./FontType")
 import Setting = require("./setting")
 
 class NumberPlate {
@@ -137,7 +138,7 @@ class NumberPlate {
     // 描画
     private drawHiragana() {
         const drawSetting = Setting.drawSetting["hiragana"];
-        this.canvas.drawChar(this.hiragana, drawSetting.size, drawSetting.position, this.getColor());
+        this.canvas.drawChar(this.hiragana, drawSetting.size, drawSetting.position, this.getColor(), CanvasWrapper.KEEP_ASPECT, FontType.SELF);
     }
 
     private drawKanji() {

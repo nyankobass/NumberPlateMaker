@@ -1,4 +1,4 @@
-import CanvasWrapper from "./canvas_wrapper";
+import CanvasWrapper = require( "./canvas_wrapper")
 
 interface Size {
     width: number,
@@ -64,7 +64,7 @@ class Setting {
         },
         "kanji1-1": {
             position: {
-                x: Setting.mm2px(20),
+                x: Setting.mm2px(105),
                 y: Setting.mm2px(15)
             },
             size: {
@@ -130,11 +130,44 @@ class Setting {
         },
         "kanji4-1": {
             position: {
+                x: Setting.mm2px(170 - 95),
+                y: Setting.mm2px(15)
+            },
+            size: {
+                width: Setting.mm2px(20),
+                height: Setting.mm2px(40)
+            },
+            tr_option: CanvasWrapper.FIXED_HEIGHT
+        },
+        "kanji4-2": {
+            position: {
+                x: Setting.mm2px(170 - 70),
+                y: Setting.mm2px(15)
+            },
+            size: {
+                width: Setting.mm2px(20),
+                height: Setting.mm2px(40)
+            },
+            tr_option: CanvasWrapper.FIXED_HEIGHT
+        },
+        "kanji4-3": {
+            position: {
                 x: Setting.mm2px(170 - 45),
                 y: Setting.mm2px(15)
             },
             size: {
-                width: Setting.mm2px(40),
+                width: Setting.mm2px(20),
+                height: Setting.mm2px(40)
+            },
+            tr_option: CanvasWrapper.FIXED_HEIGHT
+        },
+        "kanji4-4": {
+            position: {
+                x: Setting.mm2px(170 - 20),
+                y: Setting.mm2px(15)
+            },
+            size: {
+                width: Setting.mm2px(20),
                 height: Setting.mm2px(40)
             },
             tr_option: CanvasWrapper.FIXED_HEIGHT

@@ -1,4 +1,5 @@
 import * as WebfontLoader from 'webfontloader'
+import FontType = require("./FontType")
 
 interface Size {
     width: number,
@@ -10,12 +11,14 @@ interface Position {
     y: number
 }
 
-
 // コンストラクタで与えらえたcanvasに描画する
 class CanvasWrapper {
     //Webフォントの名前
-    private webFontName:string = 'Sawarabi Mincho';
-    private webFontURL :string = 'https://fonts.googleapis.com/css?family=Sawarabi+Mincho';
+    private readonly hiraganaFontName: string = 'Hiragana';
+    private readonly kanjiFontName: string = 'Kanji';
+
+    private readonly hiraganaCSS: string = '/css/hiragana.css';
+    private readonly kanjiCSS: string = '/css/kanji.css';
 
     // キャンバス
     private canvas: HTMLCanvasElement;
@@ -23,7 +26,7 @@ class CanvasWrapper {
     // 画像データ
     private numberImg: { [key: string]: HTMLImageElement; } = {};;
 
-    private readonly IMAGE_FILE_NAME: string[] = [
+    private readonly IMAGE_FILE_NAME_LIST: string[] = [
         "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "・"
     ]
 
@@ -36,9 +39,11 @@ class CanvasWrapper {
     constructor(canvas: HTMLCanvasElement) {
         this.canvas = canvas;
     }
+
+    // 初期化
     init(callback: () => void) {
-        
-        let load_num = this.IMAGE_FILE_NAME.length + 1;
+
+        let load_num = this.IMAGE_FILE_NAME_LIST.length + 1;
 
         const func = function () {
             load_num = load_num - 1;
@@ -50,16 +55,16 @@ class CanvasWrapper {
         // Webフォントの読み込み
         WebfontLoader.load({
             custom: {
-                families: [this.webFontName],
-                urls: [this.webFontURL]
+                families: [this.hiraganaFontName, this.kanjiFontName],
+                urls: [this.hiraganaCSS, this.kanjiCSS]
             },
             active: func,
-            inactive: func
+            inactive: this.toDataURL.bind(this),
         });
 
         // 画像の読み込み
-        for (let i: number = 0; i < this.IMAGE_FILE_NAME.length; i++) {
-            const fileName = this.IMAGE_FILE_NAME[i];
+        for (let i: number = 0; i < this.IMAGE_FILE_NAME_LIST.length; i++) {
+            const fileName = this.IMAGE_FILE_NAME_LIST[i];
             const filePath = "img/" + fileName + ".png";
 
             this.numberImg[fileName] = new Image();
@@ -97,7 +102,7 @@ class CanvasWrapper {
 
     // 1文字を指定されたサイズ・位置・色で描画する
     // 数字に関しては画像データ(number_img)を利用して描画する
-    public drawChar(char: string, size: Size, position: Position, color: string, trOption = CanvasWrapper.KEEP_ASPECT) {
+    public drawChar(char: string, size: Size, position: Position, color: string, trOption = CanvasWrapper.KEEP_ASPECT, fontType:FontType = FontType.SANS_SELF) {
         // 一文字に制限
         char = char.slice(0, 1);
 
@@ -106,7 +111,7 @@ class CanvasWrapper {
         }
 
         else {
-            this.drawJpChar(char, size, position, color, trOption);
+            this.drawJpChar(char, size, position, color, trOption, fontType);
         }
     }
 
@@ -118,7 +123,7 @@ class CanvasWrapper {
 
     // 引数に与えられた文字の画像が用意されている場合true
     public canDrawImage(char: string): boolean {
-        if (this.IMAGE_FILE_NAME.indexOf(char) == -1) {
+        if (this.IMAGE_FILE_NAME_LIST.indexOf(char) == -1) {
             return false;
         }
 
@@ -160,7 +165,7 @@ class CanvasWrapper {
     }
 
     // 1文字を指定されたサイズ・位置・色で描画する
-    private drawJpChar(char: string, size: Size, position: Position, color: string, trOption = CanvasWrapper.KEEP_ASPECT) {
+    private drawJpChar(char: string, size: Size, position: Position, color: string, trOption = CanvasWrapper.KEEP_ASPECT, fontType = FontType.SANS_SELF) {
         const MEM_CANVAS_HEIGHT = 500;
         const MEM_CANVAS_WIDTH = 500;
 
@@ -179,7 +184,14 @@ class CanvasWrapper {
         context.fillRect(0, 0, MEM_CANVAS_WIDTH, MEM_CANVAS_HEIGHT);
 
         context.fillStyle = color;
-        context.font = "bold 300px 'Sawarabi Mincho'";
+
+        if (fontType == FontType.SELF) {
+            context.font = "300px " + this.hiraganaFontName;
+        }
+        else {
+            context.font = "300px " + this.kanjiFontName;
+        }
+
         context.textAlign = "left";
         context.textBaseline = "top";
         context.fillText(char, 0, 0);
