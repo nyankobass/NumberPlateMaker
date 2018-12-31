@@ -3,7 +3,7 @@ const path = require('path');
 module.exports = {
     devtool: "source-map",
     entry: {
-        number_plate: './src/controller.ts'
+        number_plate: './src/index.ts'
     },
     output: {
         path: path.join(__dirname, 'build'),
