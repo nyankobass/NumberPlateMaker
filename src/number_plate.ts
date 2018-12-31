@@ -6,7 +6,12 @@ import Setting = require("./setting")
 class NumberPlate {
     // 書き込み情報
     private smallNumberList: string[] = ["3", "0", "0"];
-    private largeNumberList: string[] = ["1", "2", "3", "4"];
+    private largeNumberList: { number: string, is_dot: boolean }[] = [
+        { number: "1", is_dot: false },
+        { number: "2", is_dot: false },
+        { number: "3", is_dot: false },
+        { number: "4", is_dot: false }
+    ];
 
     public static readonly SMALL_NUMBER_COUNT: number = 3;
     public static readonly LARGE_NUMBER_COUNT: number = 4;
@@ -25,7 +30,7 @@ class NumberPlate {
 
     // オブザーバー一覧
     private obserber_list: NumberPlateObserver[] = [];
-    public registObserver(observer:NumberPlateObserver){
+    public registObserver(observer: NumberPlateObserver) {
         this.obserber_list.push(observer);
     }
 
@@ -40,7 +45,7 @@ class NumberPlate {
         this.canvas.init(callback);
     }
 
-    public toDataURL():string{
+    public toDataURL(): string {
         return this.canvas.toDataURL();
     }
 
@@ -107,30 +112,66 @@ class NumberPlate {
             return;
         }
 
-        for (let i: number = 0; i < NumberPlate.LARGE_NUMBER_COUNT; i++) {
-            let number_char = "・";
-            if (CanvasWrapper.isNumber(largeNumberList[i])) {
-                number_char = largeNumberList[i];
-            }
+        // 数値判定用正規表現
+        const reg = /[0-9]/;
 
-            this.largeNumberList[i] = number_char;
+        const dot_char = "・";
+        // 数字以外の入力はドットに置換
+        for (let i: number = 0; i < NumberPlate.LARGE_NUMBER_COUNT; i++) {
+            if (!reg.test(largeNumberList[i])) {
+                largeNumberList[i] = dot_char;
+            }
         }
 
-        let isDot: boolean = false;
-        for (let i: number = NumberPlate.LARGE_NUMBER_COUNT - 1; i >= 0; i--) {
-            if (isDot) {
-                this.largeNumberList[i] = "・";
+        // 値の格納
+        for (let i: number = 0; i < NumberPlate.LARGE_NUMBER_COUNT; i++) {
+            if (largeNumberList[i] != dot_char) {
+                this.largeNumberList[i].number = largeNumberList[i];
             }
-            else if (this.largeNumberList[i] == "・") {
-                isDot = true;
+        }
+
+        // ドットの処理
+        // 変更されたインデックスを取得
+        let change_index = -1;
+        for (let i: number = 0; i < NumberPlate.LARGE_NUMBER_COUNT; i++) {
+            const is_dot = largeNumberList[i] == dot_char;
+            if (is_dot != this.largeNumberList[i].is_dot) {
+                change_index = i;
+            }
+            this.largeNumberList[i].is_dot = is_dot;
+        }
+
+        // ドットの修正
+        if(change_index == -1){
+
+        }
+        // 数値→ドットの変更の場合、変更点より左側もすべてドットに変更
+        else if (this.largeNumberList[change_index].is_dot == true) {
+            for (let i: number = 0; i < change_index; i++) {
+                this.largeNumberList[i].is_dot = this.largeNumberList[change_index].is_dot
+            }
+        }
+        // ドット→数値の変更の場合、変更点よりも右側をすべてドットに変更
+        else{
+            for (let i: number = change_index; i < NumberPlate.LARGE_NUMBER_COUNT; i++) {
+                this.largeNumberList[i].is_dot = this.largeNumberList[change_index].is_dot
             }
         }
 
         // オブザーバーへ変更を通知
+        const changedLargeNumberList: string[] = []
+        for (let i: number = 0; i < NumberPlate.LARGE_NUMBER_COUNT; i++) {
+            if (this.largeNumberList[i].is_dot) {
+                changedLargeNumberList.push(dot_char);
+            }
+            else {
+                changedLargeNumberList.push(this.largeNumberList[i].number);
+            }
+        }
         this.obserber_list.forEach(observer => {
-            observer.onChangeLargeNumber(this.largeNumberList);
+            observer.onChangeLargeNumber(changedLargeNumberList);
         });
-        
+
         this.drawAll();
     }
 
@@ -160,14 +201,18 @@ class NumberPlate {
             const setting_key = "large_number" + (i + 1).toString();
             const drawSetting = Setting.drawSetting[setting_key];
 
-            this.canvas.drawChar(this.largeNumberList[i], drawSetting.size, drawSetting.position, this.getColor());
-        
-            if(this.largeNumberList[i] == "・"){
+            if (this.largeNumberList[i].is_dot) {
+                this.canvas.drawChar("・", drawSetting.size, drawSetting.position, this.getColor());
+            }
+            else {
+                this.canvas.drawChar(this.largeNumberList[i].number, drawSetting.size, drawSetting.position, this.getColor());
+            }
+            if (this.largeNumberList[i].is_dot) {
                 isDrawHyphen = false;
             }
         }
 
-        if (isDrawHyphen){
+        if (isDrawHyphen) {
             this.drawHyphen();
         }
     }
@@ -188,6 +233,23 @@ class NumberPlate {
             this.canvas.drawChar(drawSmallNumberList[i], drawSetting.size, drawSetting.position, this.getColor());
         }
     }
+
+    // ハイフンの描写
+    private drawHyphen(is_display = true) {
+        const drawSetting = {
+            position: {
+                x: Setting.mm2px(177.5),
+                y: Setting.mm2px(104),
+            },
+            size: {
+                width: Setting.mm2px(20),
+                height: Setting.mm2px(12)
+            }
+        }
+
+        this.canvas.drawRect(drawSetting.size, drawSetting.position, this.getColor());
+    }
+
 
     // 色取得
     private getColor(): string {
@@ -230,23 +292,6 @@ class NumberPlate {
 
         return Setting.BG_COLOR[Setting.NORMAL_CAR];
     }
-
-
-    private drawHyphen(is_display = true) {
-        const drawSetting = {
-            position: {
-                x: Setting.mm2px(177.5),
-                y: Setting.mm2px(104),
-            },
-            size: {
-                width: Setting.mm2px(20),
-                height: Setting.mm2px(12)
-            }
-        }
-
-        this.canvas.drawRect(drawSetting.size, drawSetting.position, this.getColor());
-    }
-
 
     // すべて塗りつぶす
     private deleteAll() {
