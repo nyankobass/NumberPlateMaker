@@ -1,3 +1,4 @@
+import NumberPlateObserver = require("./number_plate_observer")
 import CanvasWrapper = require("./canvas_wrapper")
 import Setting = require("./setting")
 
@@ -20,6 +21,12 @@ class NumberPlate {
 
     // 書き込み先
     private canvas: CanvasWrapper;
+
+    // オブザーバー一覧
+    private obserber_list: NumberPlateObserver[] = [];
+    public registObserver(observer:NumberPlateObserver){
+        this.obserber_list.push(observer);
+    }
 
     public constructor(canvas: HTMLCanvasElement) {
         this.canvas = new CanvasWrapper(canvas);
@@ -53,11 +60,21 @@ class NumberPlate {
         this.hiragana = hiragana.slice(0, 1);
         this.hiragana = hiragana;
 
+        // オブザーバーへ変更を通知
+        this.obserber_list.forEach(observer => {
+            observer.onChangeHiragana(this.hiragana);
+        });
+
         this.drawAll();
     }
 
     public setKanji(kanji: string) {
         this.kanji = kanji;
+
+        // オブザーバーへ変更を通知
+        this.obserber_list.forEach(observer => {
+            observer.onChagneKanji(this.kanji);
+        });
 
         this.drawAll();
     }
@@ -75,6 +92,11 @@ class NumberPlate {
 
             this.smallNumberList[i] = number_char;
         }
+
+        // オブザーバーへ変更を通知
+        this.obserber_list.forEach(observer => {
+            observer.onChangeSmallNumber(this.smallNumberList);
+        });
 
         this.drawAll();
     }
@@ -103,6 +125,11 @@ class NumberPlate {
             }
         }
 
+        // オブザーバーへ変更を通知
+        this.obserber_list.forEach(observer => {
+            observer.onChangeLargeNumber(this.largeNumberList);
+        });
+        
         this.drawAll();
     }
 

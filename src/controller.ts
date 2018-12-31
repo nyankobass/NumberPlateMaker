@@ -1,18 +1,25 @@
 import NumberPlate = require("./number_plate")
 import Setting = require("./setting")
+import NumberPlateObserver = require("./number_plate_observer")
 
 import * as PDFMake from 'pdfmake/build/pdfmake'
 
-class Controller {
+class Controller extends NumberPlateObserver {
     // ナンバープレートModel
     private numberPlate: NumberPlate;
 
     public constructor() {
+        // 基底クラスのコンストラクタ
+        super();
+
         // キャンパス要素を取得
         var canvas: HTMLCanvasElement = document.getElementById("plate-view") as HTMLCanvasElement;
 
         this.numberPlate = new NumberPlate(canvas)
         this.numberPlate.init(this.load.bind(this));
+
+        // オブザーバー登録
+        this.numberPlate.registObserver(this);
     }
 
     // 読み込み時処理
@@ -41,48 +48,67 @@ class Controller {
         //===================================
         // ひらがな
         const hiraganaInput = document.getElementById("hiragana") as HTMLInputElement;
-        hiraganaInput.oninput = this.changeHiragana;
+        hiraganaInput.oninput = this.changeHiragana.bind(this);
 
         // 運輸支局
         const kanjiInput = document.getElementById("kanji") as HTMLInputElement;
-        kanjiInput.oninput = this.changeKanji;
+        kanjiInput.oninput = this.changeKanji.bind(this);
 
         // 普通自動車/軽自動車
         const normalCarInput = document.getElementById("normal-car") as HTMLInputElement;
         normalCarInput.onclick = this.changeCarType;
         const keiCarInput = document.getElementById("kei-car") as HTMLInputElement;
-        keiCarInput.onclick = this.changeCarType;
+        keiCarInput.onclick = this.changeCarType.bind(this);
 
         // 自家用車/社用車
         const homeUseInput = document.getElementById("home-use") as HTMLInputElement;
         homeUseInput.onclick = this.changeIsCompany;
         const companyUseInput = document.getElementById("company-use") as HTMLInputElement;
-        companyUseInput.onclick = this.changeIsCompany;
+        companyUseInput.onclick = this.changeIsCompany.bind(this);
 
         // 分類番号
         for (let i: number = 1; i <= NumberPlate.SMALL_NUMBER_COUNT; i++) {
             const input = document.getElementById("small_number" + i.toString()) as HTMLSelectElement;
-            input.oninput = this.changeSmallNumber;
+            input.oninput = this.changeSmallNumber.bind(this);
         }
         // 一連指定番号
         for (let i: number = 1; i <= NumberPlate.LARGE_NUMBER_COUNT; i++) {
             const input = document.getElementById("large_number" + i.toString()) as HTMLSelectElement;
-            input.oninput = this.changeLargeNumber;
+            input.oninput = this.changeLargeNumber.bind(this);
         }
 
         // pdf関連
         const printButton = document.getElementById("download-button") as HTMLButtonElement;
-        printButton.onclick = this.savePDF;
+        printButton.onclick = this.savePDF.bind(this);
 
 
         //ローディング画面非表示
         const loadingDiv = document.getElementById("loading") as HTMLDivElement;
-        loadingDiv.classList.toggle('is-show')
+        loadingDiv.classList.toggle('is-show');
+    }
+
+    //===================================
+    // NumberPlateObserver
+    //===================================
+    onChangeLargeNumber(largeNumberList: string[]) {
+        // 一連指定番号
+        for (let i: number = 1; i <= NumberPlate.LARGE_NUMBER_COUNT; i++) {
+            const input = document.getElementById("large_number" + i.toString()) as HTMLSelectElement;
+
+            for (let j: number = 0; j < input.options.length; j++) {
+                if (input.options[j].value == largeNumberList[i - 1]) {
+                    input.options[j].selected = true;
+                }
+                else {
+                    input.options[j].selected = false;
+                }
+            }
+        }
     }
 
 
     //===================================
-    // Callback関数
+    // View変更時のCallback関数
     //===================================
     // ひらがな変更時callback関数
     changeHiragana() {
