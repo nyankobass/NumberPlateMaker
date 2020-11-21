@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "webpack-dev-server -d --progress --colors --display-error-details",
-    "build": "webpack"
+    "build": "webpack --mode production"
   },
   "keywords": [],
   "author": "",
