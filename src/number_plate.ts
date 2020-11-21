@@ -192,14 +192,23 @@ class NumberPlate {
     }
 
     private drawKanji() {
-        const kanjiList: string[] = this.kanji.split("");
+        const smallNumberNum = this.getSmallNumberNum();
 
+        const kanjiList: string[] = this.kanji.split("");
         const wordCount = Math.min(kanjiList.length, 4);
+
 
         for (let i: number = 0; i < wordCount; i++) {
             const setting_key = "kanji" + wordCount.toString() + "-" + (i + 1).toString();
             const drawSetting = Setting.drawSetting[setting_key];
-            this.canvas.drawChar(kanjiList[i], drawSetting.size, drawSetting.position, this.getColor(), drawSetting.tr_option);
+
+
+            let drawPosition = Object.assign({},  drawSetting.position);
+            if (smallNumberNum <= 1) {
+                drawPosition.x += Setting.mm2px(20);
+            }
+
+            this.canvas.drawChar(kanjiList[i], drawSetting.size, drawPosition, this.getColor(), drawSetting.tr_option);
         }
     }
 
@@ -324,6 +333,19 @@ class NumberPlate {
         this.drawLargeNumber();
 
         this.drawBolt();
+    }
+
+
+    /* getter */
+    private getSmallNumberNum() {
+        let count = 0;
+        for (let i: number = 0; i < NumberPlate.SMALL_NUMBER_COUNT; i++) {
+            if (this.smallNumberList[i] != " ") {
+                count++;
+            }
+        }
+
+        return count;
     }
 }
 
