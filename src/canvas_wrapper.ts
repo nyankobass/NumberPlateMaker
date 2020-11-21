@@ -209,9 +209,9 @@ class CanvasWrapper {
             context.font = "300px " + this.kanjiFontName;
         }
 
-        context.textAlign = "left";
-        context.textBaseline = "top";
-        context.fillText(char, 0, 0);
+        context.textAlign = "center";
+        context.textBaseline = "middle";
+        context.fillText(char, MEM_CANVAS_WIDTH / 2, MEM_CANVAS_HEIGHT / 2);
 
         // 文字を覆う座標を取得
         var pixels = context.getImageData(0, 0, MEM_CANVAS_WIDTH, MEM_CANVAS_HEIGHT);
