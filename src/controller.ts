@@ -3,6 +3,7 @@ import Setting = require("./setting")
 import NumberPlateObserver = require("./number_plate_observer")
 
 import * as PDFMake from 'pdfmake/build/pdfmake'
+import PDFFonts from 'pdfmake/build/vfs_fonts'
 
 class Controller extends NumberPlateObserver {
     // ナンバープレートModel
@@ -181,20 +182,20 @@ class Controller extends NumberPlateObserver {
     //===================================
     // pdfを表示する
     savePDF() {
-        const docDefinition = this.createDocDefinition();
+        const docDefinition: any = this.createDocDefinition();
 
-        PDFMake.createPdf(docDefinition).open();
+        PDFMake.createPdf(docDefinition, undefined, undefined, PDFFonts.pdfMake.vfs).open();
     }
 
     // pdfを印刷する
     // @note iOS版Safariで動作せず。
     printPDF() {
-        const docDefinition = this.createDocDefinition();
+        const docDefinition: any = this.createDocDefinition();
 
         PDFMake.createPdf(docDefinition).print();
     }
 
-    createDocDefinition(): PDFMake.TDocumentDefinitions {
+    createDocDefinition() {
         //===================================
         // 各種寸法作成
         //===================================
@@ -215,7 +216,7 @@ class Controller extends NumberPlateObserver {
         this.numberPlate.setIsLarge(true);
         const large_base64 = this.numberPlate.toDataURL();
         this.numberPlate.setIsLarge(false);
-
+ 
         // pdf設定
         const docDefinition = {
             pageSize: "A4" as any,
@@ -251,7 +252,16 @@ class Controller extends NumberPlateObserver {
                             image: large_base64,
                             width: plateWidth,
                         }
-                    ]
+                    ],
+                },
+                {
+                    text: "  ",
+                },
+                {
+                    text: "Copyright © 2018-2020 nyankobass All rights rserved.",
+                    fontSize: 7,
+                    bold: true,
+                    alignment: "center"
                 }
             ]
         };
